@@ -552,8 +552,15 @@ def main(argv):
   scene_option.flags[mujoco.mjtVisFlag.mjVIS_CONTACTFORCE] = False
   for i, rollout in enumerate(trajectories):
     traj = rollout[::render_every]
+    # Use "track" camera if the model has one, else default.
+    cam_name = None
+    for ci in range(infer_env.mj_model.ncam):
+      if infer_env.mj_model.camera(ci).name == "track":
+        cam_name = "track"
+        break
     frames = infer_env.render(
-        traj, height=480, width=640, scene_option=scene_option
+        traj, height=480, width=640, camera=cam_name,
+        scene_option=scene_option,
     )
     media.write_video(logdir / f"rollout{i}.mp4", frames, fps=fps)
     print(f"Rollout video saved as '{logdir}/rollout{i}.mp4'.")

@@ -33,7 +33,7 @@ def default_config() -> config_dict.ConfigDict:
       sim_dt=0.002,
       episode_length=1000,
       action_repeat=1,
-      action_scale=80.0,
+      action_scale=20.0,
       history_len=1,
       soft_joint_pos_limit_factor=0.95,
       noise_config=config_dict.create(
@@ -57,9 +57,9 @@ def default_config() -> config_dict.ConfigDict:
               base_height=-1.0,
               lin_vel_z=-0.2,
               # Energy rewards.
-              torques=-0.00002,
-              action_rate=-0.005,
-              energy=-0.00005,
+              torques=-0.0005,
+              action_rate=-0.02,
+              energy=-0.0001,
               # Leg pose rewards.
               leg_pose=-0.1,
               dof_pos_limits=-0.5,
@@ -232,9 +232,8 @@ class Joystick(wf_base.WFTron1AEnv):
     data = state.data.replace(qvel=qvel)
     state = state.replace(data=data)
 
-    # Apply torque action: scale action to torque range.
+    # action in [-1,1], scale to torque. Clip to actuator limits.
     ctrl = action * self._config.action_scale
-    # Clip to actuator control range.
     ctrl = jp.clip(ctrl, self._ctrl_range[:, 0], self._ctrl_range[:, 1])
     data = mjx_env.step(self.mjx_model, state.data, ctrl, self.n_substeps)
 
