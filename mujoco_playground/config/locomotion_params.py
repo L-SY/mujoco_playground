@@ -148,6 +148,19 @@ def brax_ppo_config(
       value_obs_key="privileged_state",
     )
 
+  elif env_name in ("WFTron1AJoystickFlatTerrain",):
+    rl_config.num_timesteps = 100_000_000
+    rl_config.num_evals = 10
+    rl_config.clipping_epsilon = 0.2
+    rl_config.entropy_cost = 0.005
+    rl_config.num_envs = 4096
+    rl_config.network_factory = config_dict.create(
+        policy_hidden_layer_sizes=(256, 128, 64),
+        value_hidden_layer_sizes=(256, 128, 64),
+        policy_obs_key="state",
+        value_obs_key="privileged_state",
+    )
+
   elif env_name in (
       "BarkourJoystick",
       "H1InplaceGaitTracking",
